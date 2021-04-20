@@ -15,6 +15,7 @@ export interface BroadcastOptions {
   rooms: Set<Room>;
   except?: Set<SocketId>;
   flags?: BroadcastFlags;
+  merge?: Set<Room>;
 }
 
 export class Adapter extends EventEmitter {
@@ -218,18 +219,52 @@ export class Adapter extends EventEmitter {
   private apply(opts: BroadcastOptions, callback: (socket) => void): void {
     const rooms = opts.rooms;
     const except = this.computeExceptSids(opts.except);
+    const mergeRooms = opts.merge;
 
     if (rooms.size) {
       const ids = new Set();
-      for (const room of rooms) {
-        if (!this.rooms.has(room)) continue;
+      if (mergeRooms.size) {
+        //匹配 sid 同时在多个房间
+        for (const room of rooms) {
+          if (!this.rooms.has(room)) continue;
 
-        for (const id of this.rooms.get(room)) {
-          if (ids.has(id) || except.has(id)) continue;
+          for (const id of this.rooms.get(room)) {
+            if (ids.has(id) || except.has(id)) continue;
+            let mergeBreak = false; //不存在于其中一个房间
+            for (const mr of mergeRooms) {
+              if (!this.rooms.has(mr)) {
+                // 房间不存在
+                mergeBreak = true
+                break
+              }
+              if (! this.rooms.get(mr).has(id)) {
+                mergeBreak = true
+                break
+              }
+            }
+            if (! mergeBreak) {
+              ids.add(id);
+            }
+          }
+        }
+        //找到所以匹配的 sid
+        for (const id of ids) {
           const socket = this.nsp.sockets.get(id);
           if (socket) {
             callback(socket);
-            ids.add(id);
+          }
+        }
+      } else {
+        for (const room of rooms) {
+          if (!this.rooms.has(room)) continue;
+
+          for (const id of this.rooms.get(room)) {
+            if (ids.has(id) || except.has(id)) continue;
+            const socket = this.nsp.sockets.get(id);
+            if (socket) {
+              callback(socket);
+              ids.add(id);
+            }
           }
         }
       }

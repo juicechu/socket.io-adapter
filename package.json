@@ -1,10 +1,10 @@
 {
-  "name": "socket.io-adapter",
-  "version": "2.2.0",
+  "name": "@juice/socket.io-adapter",
+  "version": "2.2.0-merge-room",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/socketio/socket.io-adapter.git"
+    "url": "git://github.com/juice/socket.io-adapter.git"
   },
   "files": [
     "dist/"
@@ -25,5 +25,15 @@
     "format:check": "prettier --parser typescript --check 'lib/**/*.ts' 'test/**/*.js'",
     "format:fix": "prettier --parser typescript --write 'lib/**/*.ts' 'test/**/*.js'",
     "prepack": "tsc"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/juice/socket.io-adapter/issues"
+  },
+  "homepage": "https://github.com/juice/socket.io-adapter#readme",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "dependencies": {},
+  "author": "juice"
 }
