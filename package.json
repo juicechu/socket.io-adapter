@@ -24,7 +24,8 @@
     "test": "npm run format:check && tsc && nyc mocha test/index.js",
     "format:check": "prettier --parser typescript --check 'lib/**/*.ts' 'test/**/*.js'",
     "format:fix": "prettier --parser typescript --write 'lib/**/*.ts' 'test/**/*.js'",
-    "prepack": "tsc"
+    "prepack": "tsc",
+    "prepare": "npm run prepack"
   },
   "bugs": {
     "url": "https://github.com/juice/socket.io-adapter/issues"
